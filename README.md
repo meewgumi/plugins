@@ -21,6 +21,7 @@ Check out [our documentation](https://www.framer.com/developers/plugins-introduc
 
 - To set up this repository for local development, clone the repo, [install Yarn](https://yarnpkg.com/getting-started/install), and run `yarn` in the root.
 - Serve a specific plugin by running `yarn dev --filter=[plugin-name]`.
+- **Non-admin users:** If you cannot use `sudo`, run `VITE_MKCERT_DISABLE=true yarn dev --filter=[plugin-name]`. You may need to manually "Proceed" in your browser if it warns about an untrusted connection.
 - In Framer, enable "Developer Tools" via the Plugin sub-menu in the Main Menu.
 
 ### 🛠️ Contribute

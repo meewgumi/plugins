@@ -189,15 +189,24 @@ async function ensureMkcertBinary(): Promise<string> {
 }
 
 async function generateCerts(mkcertPath: string): Promise<void> {
-    debug("Running mkcert to install the local root CA...")
-    try {
-        await execFileAsync(mkcertPath, ["-install"], { env: MKCERT_ENV })
-    } catch (err) {
-        throw new Error(
-            "Failed to install mkcert root CA into the system trust store. " +
-                "If you canceled the password prompt, rerun this command and allow the install.\n" +
-                `mkcert error: ${formatMkcertError(err)}`
-        )
+    const isMkcertDisabled =
+        process.env.VITE_MKCERT_DISABLE === "true" ||
+        process.env.VITE_MKCERT_DISABLE === "1"
+
+    if (!isMkcertDisabled) {
+        debug("Running mkcert to install the local root CA...")
+        try {
+            await execFileAsync(mkcertPath, ["-install"], { env: MKCERT_ENV })
+        } catch (err) {
+            warn(
+                "Failed to install mkcert root CA into the system trust store. " +
+                    "Sync will still start, but you may need to manually trust the certificate in your browser.\n" +
+                    `mkcert error: ${formatMkcertError(err)}`
+            )
+            // Non-fatal: continue even if we couldn't install into system trust store.
+        }
+    } else {
+        debug("Skipping mkcert -install because VITE_MKCERT_DISABLE is set")
     }
 
     debug("Running mkcert to generate the localhost server certificate...")
